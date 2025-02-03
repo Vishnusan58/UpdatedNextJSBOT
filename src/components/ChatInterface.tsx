@@ -27,7 +27,7 @@ interface Message {
 
 const ChatInterface = () => {
     const initialPlan: InsurancePlanProps = {
-        planName: "Horizon Blue",
+        planName: "United Healthcare Oxford",
         premium: "$/month",
         coverageDetails: [
             { label: "Individual Deductible", value: "$1500" },
@@ -53,8 +53,8 @@ const ChatInterface = () => {
         },
         {
             type: 'bot',
-            content: "What would you like to do next?",
-            options: ['Update the plan', 'Query about the plan']
+            content: "Do you like to update your plan ?",
+            options: ['Yes', 'No']
         }
     ]);
 
@@ -128,15 +128,18 @@ const ChatInterface = () => {
                     if (data.finalPlan) {
                         botMessage.plan = data.finalPlan;
                     }
-                } else if (data.type === 'final_summary') {
-                    if (data.currentPlan) {
-                        botMessage = {
-                            type: 'bot',
-                            content: "Here's your updated plan and recommendations:",
-                            currentPlan: data.currentPlan,
-                            recommendations: data.recommendations
-                        };
-                    }
+                }else if (data.type === 'final_summary') {
+                    let botMessage: Message = {
+                        type: 'bot',
+                        content: "Here are your recommendations:", // Removed reference to "updated plan"
+                        recommendations: data.recommendations // Only add recommendations
+                    };
+
+                    // Add only the recommendations to the messages array
+                    setMessages(prev => [...prev, botMessage]);
+
+                    // Optionally reset the flow
+                    setIsInPlanUpdateFlow(false);
                 }
 
                 // Reset flow if we've reached the end
